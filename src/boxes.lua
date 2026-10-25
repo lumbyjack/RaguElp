@@ -3,6 +3,12 @@ local log = require("src/util").log
 local M = {}
 
 local TILE = 512 -- world units per tile
+local YELLOW = 0xA5A500FF
+local TRANS_YELLOW = 0xA5A50080
+local ORANGE = 0xA5FF00FF
+local TRANS_ORANGE = 0xA5FF0080
+local RED = 0x00FF00FF
+local TRANS_RED = 0x00FF0080
 
 -- A square around position
 local function drawSquare(pos, half, colour, filled)
@@ -53,12 +59,25 @@ local GRAPHICS = {
     RB = {
         ticks = 12,
         draw  = function(pos)
+            local xl = 4.5 * TILE
             local large = 2.5 * TILE
             local small = 1.5 * TILE
-            drawSquare(pos, large, 0xFFA500FF)
-            if isPlayerInsideBox(large) then drawSquare(pos, large, 0xFFA50080, true) end
-            if isPlayerInsideBox(small) then drawSquare(pos, small, 0xFF000080, true) end
-            drawSquare(pos, small, 0xFF0000FF)
+            drawSquare(pos, xl, 0xA5A500FF)
+            drawSquare(pos, large, 0xA5FF00FF)
+            drawSquare(pos, small, 0x00FF00FF)
+
+            if isPlayerInsideBox(small) then 
+                drawSquare(pos, small, 0x00FF0080, true)
+                return
+            end 
+            if isPlayerInsideBox(large) then 
+                drawSquare(pos, large, 0xA5FF0080, true)
+                return
+            end
+            if isPlayerInsideBox(xl) then 
+                drawSquare(pos, xl, 0xA5A50080, true)
+                return
+            end
         end
     },
 }
