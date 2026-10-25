@@ -4,11 +4,8 @@ local M = {}
 
 local TILE = 512 -- world units per tile
 local YELLOW = 0xA5A500FF
-local TRANS_YELLOW = 0xA5A50080
-local ORANGE = 0xA5FF00FF
-local TRANS_ORANGE = 0xA5FF0080
-local RED = 0x00FF00FF
-local TRANS_RED = 0x00FF0080
+local ORANGE = 0xFFA500FF
+local RED = 0xFF0000FF
 
 -- A square around position
 local function drawSquare(pos, half, colour, filled)
@@ -62,20 +59,20 @@ local GRAPHICS = {
             local xl = 4.5 * TILE
             local large = 2.5 * TILE
             local small = 1.5 * TILE
-            drawSquare(pos, xl, 0xA5A500FF)
-            drawSquare(pos, large, 0xA5FF00FF)
-            drawSquare(pos, small, 0x00FF00FF)
+            drawSquare(pos, xl, YELLOW)
+            drawSquare(pos, large, ORANGE)
+            drawSquare(pos, small, RED)
 
             if isPlayerInsideBox(small) then 
-                drawSquare(pos, small, 0x00FF0080, true)
+                drawSquare(pos, small, RED - 161, true)
                 return
             end 
             if isPlayerInsideBox(large) then 
-                drawSquare(pos, large, 0xA5FF0080, true)
+                drawSquare(pos, large, ORANGE- 161, true)
                 return
             end
             if isPlayerInsideBox(xl) then 
-                drawSquare(pos, xl, 0xA5A50080, true)
+                drawSquare(pos, xl, YELLOW- 161, true)
                 return
             end
         end
