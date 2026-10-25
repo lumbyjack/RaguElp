@@ -1,6 +1,30 @@
+local log = require("src/util").log
+
 local M = {}
 
-local frames = 0
+local TILE = 512 -- world units per tile
+
+-- A square around position
+local function drawSquare(pos, half, colour, filled)
+    local shape = {
+        shapePositions = {
+            Vector3.new(-half, 0, -half),
+            Vector3.new( half, 0, -half),
+            Vector3.new( half, 0,  half),
+            Vector3.new(-half, 0,  half)
+        },
+        translation = pos,
+        colour      = colour,
+        lineWidth   = 2,
+        ignoreDepth = true
+    }
+    if filled then
+        shape.shapeTris = { 0, 1, 2,  0, 2, 3 }
+    else
+        shape.shapeLines = { 0, 1,  1, 2,  2, 3,  3, 0 }
+    end
+    ShapeList.Draw(shape)
+end
 
 local function isPlayerInsideBox(rad)
     local self = Player.GetEntity()
@@ -25,15 +49,47 @@ local function isPlayerInsideBox(rad)
     return false
 end
 
+local GRAPHICS = {
+    RB = {
+        ticks = 12,
+        draw  = function(pos)
+            local large = 2.5 * TILE
+            local small = 1.5 * TILE
+            drawSquare(pos, large, 0xFFA500FF)
+            if isPlayerInsideBox(large) then drawSquare(pos, large, 0xFFA50080, true) end
+            if isPlayerInsideBox(small) then drawSquare(pos, small, 0xFF000080, true) end
+            drawSquare(pos, small, 0xFF0000FF)
+        end
+    },
+}
+
+local active = nil -- GAPHICS drawn? nil for nothing
+local ticksLeft = 0
+
 function M.onMatch(rule, text)
-    if rule.graphic == "RB" then
-        frames = 0
+    if rule.graphic == nil then
+        return
+    end
+    local graphic = GRAPHICS[rule.graphic]
+    if graphic == nil then
+        log("boxes: no graphic called ", rule.graphic)
+        return
+    end
+    active = graphic
+    ticksLeft = graphic.ticks
+end
+
+function M.onTick()
+    if ticksLeft > 0 then
+        ticksLeft = ticksLeft - 1
+        if ticksLeft == 0 then
+            active = nil
+        end
     end
 end
 
 function M.onDraw()
-    frames = frames + 1
-    if frames >= 1200 then
+    if active == nil then
         return
     end
 
@@ -42,87 +98,9 @@ function M.onDraw()
 
     local coord = player.coordGrid
     local pos = coord:ToCoordFine(true).position
+    pos.y = World.GetGroundHeight(coord.level, pos.x, pos.z) + 50
 
-    pos.y = World.GetGroundHeight(
-        coord.level, pos.x, pos.z
-    ) + 50
-
-    local large = 2.5 * 512
-    local small = 1.5 * 512
-    ShapeList.Draw({
-        shapePositions = {
-            Vector3.new(-large, 0, -large),
-            Vector3.new( large, 0, -large),
-            Vector3.new( large, 0,  large),
-            Vector3.new(-large, 0,  large)
-        },
-        shapeLines = {
-            0, 1,
-            1, 2,
-            2, 3,
-            3, 0
-        },
-        translation = pos,
-        colour = 0xFFA500FF,
-        lineWidth = 2,
-        ignoreDepth = true
-    })
-    if isPlayerInsideBox(large) then
-            ShapeList.Draw({
-        shapePositions = {
-            Vector3.new(-large, 0, -large),
-            Vector3.new( large, 0, -large),
-            Vector3.new( large, 0,  large),
-            Vector3.new(-large, 0,  large)
-        },
-        shapeTris = {
-            0, 1, 2,
-            1, 2, 3,
-            2, 3, 0
-        },
-        translation = pos,
-        colour = 0xFFA50080,
-        lineWidth = 2,
-        ignoreDepth = true
-    })
-    end
-    if isPlayerInsideBox(small) then
-            ShapeList.Draw({
-        shapePositions = {
-            Vector3.new(-small, 0, -small),
-            Vector3.new( small, 0, -small),
-            Vector3.new( small, 0,  small),
-            Vector3.new(-small, 0,  small)
-        },
-        shapeTris = {
-            0, 1, 2,
-            1, 2, 3,
-            2, 3, 0
-        },
-        translation = pos,
-        colour = 0xFF000080,
-        lineWidth = 2,
-        ignoreDepth = true
-    })
-    end
-    ShapeList.Draw({
-        shapePositions = {
-            Vector3.new(-small, 0, -small),
-            Vector3.new( small, 0, -small),
-            Vector3.new( small, 0,  small),
-            Vector3.new(-small, 0,  small)
-        },
-        shapeLines = {
-            0, 1,
-            1, 2,
-            2, 3,
-            3, 0
-        },
-        translation = pos,
-        colour = 0xFF0000FF,
-        lineWidth = 2,
-        ignoreDepth = true
-    })
+    active.draw(pos)
 end
 
 return M
