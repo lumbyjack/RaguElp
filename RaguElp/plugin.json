@@ -1,0 +1,16 @@
+{
+    "name": "RaguElp",
+    "version": "0.01",
+    "contactEmailAddress": "idiotonastic@hotmail.com",
+    "requiredDependencies": {},
+    "optionalDependencies": {
+        "prettyui": 6398181
+    },
+    "requiredPermissions": [],
+    "optionalPermissions": [
+        "httpAccess",
+        "chatAccess",
+        "trackingAccess"
+    ],
+    "urls": {}
+}
