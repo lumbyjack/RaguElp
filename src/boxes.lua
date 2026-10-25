@@ -61,11 +61,11 @@ local GRAPHICS = {
             drawSquare(pos, bonusDamage, YELLOW)
             drawSquare(pos, splash, RED)
 
-            if isPlayerInsideBox(large) then 
+            if isPlayerInsideBox(splash) then 
                 drawSquare(pos, splash, RED- 161, true)
                 return
             end
-            if isPlayerInsideBox(xl) then 
+            if isPlayerInsideBox(bonusDamage) then 
                 drawSquare(pos, bonusDamage, YELLOW- 161, true)
                 return
             end
