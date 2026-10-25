@@ -72,8 +72,7 @@ local frames = 0
 
 local function drawBox()
     frames = frames + 1
-    if frames >= 180 then
-        Event.Draw.Unsubscribe("playerBox")
+    if frames >= 1200 then
         return
     end
     local player = Player.GetEntity()
@@ -86,14 +85,14 @@ local function drawBox()
         coord.level, pos.x, pos.z
     ) + 50
 
-    local half = 2.5 * 512
-
+    local large = 2.5 * 512
+    local small = 1.5 * 512
     ShapeList.Draw({
         shapePositions = {
-            Vector3.new(-half, 0, -half),
-            Vector3.new( half, 0, -half),
-            Vector3.new( half, 0,  half),
-            Vector3.new(-half, 0,  half)
+            Vector3.new(-large, 0, -large),
+            Vector3.new( large, 0, -large),
+            Vector3.new( large, 0,  large),
+            Vector3.new(-large, 0,  large)
         },
         shapeLines = {
             0, 1,
@@ -102,10 +101,29 @@ local function drawBox()
             3, 0
         },
         translation = pos,
-        colour = 0x00FF00FF,
+        colour = 0xFFA500FF,
         lineWidth = 4,
         ignoreDepth = true
     })
+    ShapeList.Draw({
+        shapePositions = {
+            Vector3.new(-small, 0, -small),
+            Vector3.new( small, 0, -small),
+            Vector3.new( small, 0,  small),
+            Vector3.new(-small, 0,  small)
+        },
+        shapeLines = {
+            0, 1,
+            1, 2,
+            2, 3,
+            3, 0
+        },
+        translation = pos,
+        colour = 0xFF0000FF,
+        lineWidth = 4,
+        ignoreDepth = true
+    })
+
 end
 
 local function onServerTick()
@@ -129,7 +147,7 @@ local function publish(message)
 end
 local function publishGraphic(graphic)
     if graphic == "RB" then
-        drawBox()
+        frames = 0
     end
 end
 local function onChatMessage(event)
