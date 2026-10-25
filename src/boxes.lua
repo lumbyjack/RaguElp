@@ -56,23 +56,17 @@ local GRAPHICS = {
     RB = {
         ticks = 12,
         draw  = function(pos)
-            local xl = 4.5 * TILE
-            local large = 2.5 * TILE
-            local small = 1.5 * TILE
-            drawSquare(pos, xl, YELLOW)
-            drawSquare(pos, large, ORANGE)
-            drawSquare(pos, small, RED)
+            local bonusDamage = 5.5 * TILE
+            local splash = 2.5 * TILE
+            drawSquare(pos, bonusDamage, YELLOW)
+            drawSquare(pos, splash, RED)
 
-            if isPlayerInsideBox(small) then 
-                drawSquare(pos, small, RED - 161, true)
-                return
-            end 
             if isPlayerInsideBox(large) then 
-                drawSquare(pos, large, ORANGE- 161, true)
+                drawSquare(pos, splash, RED- 161, true)
                 return
             end
             if isPlayerInsideBox(xl) then 
-                drawSquare(pos, xl, YELLOW- 161, true)
+                drawSquare(pos, bonusDamage, YELLOW- 161, true)
                 return
             end
         end
