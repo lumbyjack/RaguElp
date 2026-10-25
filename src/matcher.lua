@@ -2,7 +2,7 @@ local log   = require("src/util").log
 local RULES = require("src/rules")
 
 local IGNORE_PLAYER_CHAT = true
-local PROBE_MODE         = false
+local PROBE_MODE         = true
 
 local M = {}
 
