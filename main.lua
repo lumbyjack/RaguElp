@@ -2,6 +2,7 @@ local log     = require("src/util").log
 local matcher = require("src/matcher")
 local banner  = require("src/banner")
 local boxes   = require("src/boxes")
+local ui      = require("src/ui")
 
 log('RaguElp starting...')
 

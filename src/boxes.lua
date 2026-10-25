@@ -1,11 +1,15 @@
 local log = require("src/util").log
 
+local selectedBase = nil
+local selectedBomb = nil
+
 local M = {}
 
 local TILE = 512 -- world units per tile
 local YELLOW = 0xA5A500FF
 local ORANGE = 0xFFA500FF
 local RED = 0xFF0000FF
+local GREEN = 0x00FF00FF
 
 -- A square around position
 local function drawSquare(pos, half, colour, filled)
@@ -52,6 +56,32 @@ local function isPlayerInsideBox(rad)
     return false
 end
 
+local function isUserInsideBox(radius, centerPos, targetLevel)
+    local self = Player.GetEntity()
+
+    if not self or not self.isValid or not self.coordGrid then
+        return false
+    end
+
+    -- Must be on the same floor
+    if self.coordGrid.level ~= targetLevel then
+        return false
+    end
+
+    -- Get our own position
+    local selfPos = self.coordGrid:ToCoordFine(true).position
+
+    -- Distance from the selected player's position
+    local dx = math.abs(selfPos.x - centerPos.x)
+    local dz = math.abs(selfPos.z - centerPos.z)
+
+    -- Convert tile radius to world units
+    local radiusWorld = radius * TILE
+
+    return dx <= radiusWorld and dz <= radiusWorld
+end
+
+
 local GRAPHICS = {
     RB = {
         ticks = 12,
@@ -97,20 +127,89 @@ function M.onTick()
         end
     end
 end
+-- Half a tile in world units
+local BASE = 1.5
+local BOMB = 5.5
 
-function M.onDraw()
-    if active == nil then
+local function drawSelectedPlayer(username, colour, size)
+    if not username or username == '' then
         return
     end
 
-    local player = Player.GetEntity()
-    if not player or not player.isValid then return end
+    for _, player in ipairs(PlayerList.All() or {}) do
+        if player.isValid
+            and player.displayName == username
+            and player.coordGrid then
 
-    local coord = player.coordGrid
-    local pos = coord:ToCoordFine(true).position
-    pos.y = World.GetGroundHeight(coord.level, pos.x, pos.z) + 50
+            local coord = player.coordGrid
+            local pos = coord:ToCoordFine(true).position
 
-    active.draw(pos)
+            pos.y = World.GetGroundHeight(
+                coord.level,
+                pos.x,
+                pos.z
+            ) + 50
+            drawSquare(pos, size * TILE, colour, false)
+            -- Add fill when inside
+            if isUserInsideBox(size, pos, coord.level) then
+                drawSquare(pos, size * TILE, colour - 161, true)
+            end
+
+            return
+        end
+    end
 end
 
+function M.onDraw()
+    -- Existing chat-triggered graphics
+    if active ~= nil then
+        local player = Player.GetEntity()
+
+        if player and player.isValid then
+            local coord = player.coordGrid
+            local pos = coord:ToCoordFine(true).position
+
+            pos.y = World.GetGroundHeight(
+                coord.level,
+                pos.x,
+                pos.z
+            ) + 50
+
+            active.draw(pos)
+        end
+    end
+
+    -- Draw selected players only after selection
+    if selectedBase then
+        drawSelectedPlayer(
+            selectedBase,
+            YELLOW,
+            BASE 
+        )
+    end
+
+    if selectedBomb then
+        drawSelectedPlayer(
+            selectedBomb,
+            RED,
+            BOMB
+        )
+    end
+end
+
+
+
+function M.drawSelectedPlayers(baseName, bombName)
+    drawSelectedPlayer(baseName, YELLOW, BASE)
+    drawSelectedPlayer(bombName, RED, BOMB)
+end
+
+
+function M.setBase(username)
+    selectedBase = username
+end
+
+function M.setBomb(username)
+    selectedBomb = username
+end
 return M
