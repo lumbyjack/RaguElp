@@ -10,7 +10,7 @@ log('RaguElp starting...')
 
 -- SETTINGS
 local RULES = {
-    { match = "has sent a bomb after you", show = "Bomb on you" }
+    { match = "has sent a bomb after you", show = "Bomb on you", graphic = "RB" }
 }
 
 local IGNORE_PLAYER_CHAT = true
@@ -18,7 +18,6 @@ local IGNORE_PLAYER_CHAT = true
 local SHOW_BANNER = true
 local ADD_CHAT_LINE = false
 local BANNER_TICKS = 8
-
 local PROBE_MODE = false
 
 
@@ -68,6 +67,46 @@ local function showBanner(text)
         "width=", banner.width, "height=", banner.height, "x=", banner.x, "y=", banner.y,
         "layerWidth=", banner.parent.width, "layerHeight=", banner.parent.height)
 end
+-- BOX
+local frames = 0
+
+local function drawBox()
+    frames = frames + 1
+    if frames >= 180 then
+        Event.Draw.Unsubscribe("playerBox")
+        return
+    end
+    local player = Player.GetEntity()
+    if not player or not player.isValid then return end
+
+    local coord = player.coordGrid
+    local pos = coord:ToCoordFine(true).position
+
+    pos.y = World.GetGroundHeight(
+        coord.level, pos.x, pos.z
+    ) + 50
+
+    local half = 2.5 * 512
+
+    ShapeList.Draw({
+        shapePositions = {
+            Vector3.new(-half, 0, -half),
+            Vector3.new( half, 0, -half),
+            Vector3.new( half, 0,  half),
+            Vector3.new(-half, 0,  half)
+        },
+        shapeLines = {
+            0, 1,
+            1, 2,
+            2, 3,
+            3, 0
+        },
+        translation = pos,
+        colour = 0x00FF00FF,
+        lineWidth = 4,
+        ignoreDepth = true
+    })
+end
 
 local function onServerTick()
     if bannerTicksLeft > 0 then
@@ -88,7 +127,11 @@ local function publish(message)
         Chat.AddMessage(message)
     end
 end
-
+local function publishGraphic(graphic)
+    if graphic == "RB" then
+        drawBox()
+    end
+end
 local function onChatMessage(event)
     local text = stripTags(event.chatMessage)
 
@@ -108,6 +151,7 @@ local function onChatMessage(event)
 
     if rule ~= nil then
         publish(rule.show)
+        publishGraphic(rule.graphic)
     end
 end
 
@@ -118,6 +162,7 @@ end
 
 Event.ChatMessage.Subscribe("chatTriggers", onChatMessage)
 Event.ServerLogic.Subscribe("chatTriggersBannerTick", onServerTick)
+Event.Draw.Subscribe("playerBox", drawBox)
 
 -- DEBUG: show a test banner as soon as the plugin loads. Remove once it works.
 showBanner("Chat Triggers loaded")
