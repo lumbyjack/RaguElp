@@ -1,5 +1,6 @@
 local log     = require("src/util").log
 local matcher = require("src/matcher")
+local debuffs = require("src/debuffs")
 local banner  = require("src/banner")
 local boxes   = require("src/boxes")
 local markers = require("src/markers")
@@ -17,7 +18,7 @@ local modules = { banner, boxes, markers, picker }
 local function callAll(name, ...)
     for _, mod in ipairs(modules) do
         local handler = mod[name]
-        if handler then handler(...)
+        if handler then handler(...) end
     end
 end
 
@@ -32,7 +33,11 @@ Event.ChatMessage.Subscribe("raguElpChat", function(event)
     callAll("onMatch", rule, text)
 end)
 
-Event.ServerLogic.Subscribe("raguElpTick", function(event)
+Event.ServerLogic.Subscribe("raguElpTick", function()
+    for _, rule in ipairs(debuffs.check()) do
+        log("Debuff trigger: ", rule.show)
+        callAll("onMatch", rule)
+    end
     callAll("onTick")
 end)
 
