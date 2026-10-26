@@ -7,13 +7,17 @@ local picker  = require("src/picker")
 
 log('RaguElp starting...')
 
-local outputs = { banner, boxes, markers, picker }
+-- Every module gets these calls, if it has a function with that name:
+--  onMatch(rule, text) a rule fired
+--  onTick()            every server tick (0.6s)
+--  onDraw()            every frame
+--  shutdown()          the plugin is unloading
+local modules = { banner, boxes, markers, picker }
 
 local function callAll(name, ...)
-    for _, out in ipairs(outputs) do
-        if out[name] then
-            out[name](...)
-        end
+    for _, mod in ipairs(modules) do
+        local handler = mod[name]
+        if handler then handler(...)
     end
 end
 
@@ -21,10 +25,9 @@ if not Plugin.HasPermission(PluginPermissions.chatAccess) then
     log("RaguElp: RaguElp hasn't been granted, so no chat messages will arrive.")
 end
 
-
 Event.ChatMessage.Subscribe("raguElpChat", function(event)
     local rule, text = matcher.match(event)
-    if rule == nil then return end
+    if not rule then return end
     log("Chat trigger: ", rule.show)
     callAll("onMatch", rule, text)
 end)
