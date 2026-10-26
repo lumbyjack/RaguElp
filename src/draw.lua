@@ -3,7 +3,7 @@ local TILE = require("src/util").TILE
 local M = {}
 
 -- Colours are 0xRRGGBBAA: red, green, blue then opacity (AA).
-M.YELLOW = 0xAtA500FF
+M.YELLOW = 0xA5A500FF
 M.RED    = 0xFF0000FF
 
 local SEE_THROUGH = 0x5E    -- opacity for filled squares: 0x00 invisible, 0xFF solid
