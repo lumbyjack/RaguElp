@@ -1,8 +1,10 @@
+-- A debuff rule has `debuff` (the icon's sprite ID) instead of `match`.
 -- Each rule:
 --   match   = words to look for in a game message (not case-sensitive)
 --   show    = the text to appear on the banner
 --   graphic = optional: a graphic from `boxes.lua` to draw around you
 return {
+    -- Chat Rules
     { 
         match   = "has sent a bomb after you", 
         show    = "Red bomb on you, get away from other players!", 
@@ -19,5 +21,10 @@ return {
     {
         match   = "releases his mental link",
         show    = "Mental link released - ATTACK!"
+    },
+    -- Debuff Rules
+    {
+        debuff = 21239,
+        show   = "Bleed on you"
     }
 }
