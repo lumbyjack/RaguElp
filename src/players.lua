@@ -74,7 +74,7 @@ end
 
 -- True if any other player is within `tiles` of `player`.
 function M.anyoneNear(player, tiles)
-    for _, other in ipairs(M.other()) do
+    for _, other in ipairs(M.others()) do
         if M.isNear(player, other, tiles) then
             return true
         end

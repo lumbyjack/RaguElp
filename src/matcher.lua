@@ -2,7 +2,7 @@ local log   = require("src/util").log
 local RULES = require("src/rules")
 
 local IGNORE_PLAYER_CHAT = true   -- skip anything a player typed
-local PROBE_MODE         = true   -- true = log every message (for detecting new rules)
+local PROBE_MODE         = false   -- true = log every message (for detecting new rules)
 
 local M = {}
 
@@ -15,7 +15,7 @@ end
 local function findRule(text)
     local lower = string.lower(text)
     for _, rule in ipairs(RULES) do
-        if string.find(lower, string.lower(rule.match), 1, true) then
+        if rule.match and string.find(lower, string.lower(rule.match), 1, true) then
             return rule
         end
     end

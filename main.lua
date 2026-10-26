@@ -2,11 +2,12 @@ local log     = require("src/util").log
 local matcher = require("src/matcher")
 local banner  = require("src/banner")
 local boxes   = require("src/boxes")
-local ui      = require("src/ui")
+local markers = require("src/markers")
+local picker  = require("src/picker")
 
 log('RaguElp starting...')
 
-local outputs = { banner, boxes }
+local outputs = { banner, boxes, markers, picker }
 
 local function callAll(name, ...)
     for _, out in ipairs(outputs) do
