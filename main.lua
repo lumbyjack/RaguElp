@@ -6,7 +6,7 @@ local boxes   = require("src/boxes")
 local markers = require("src/markers")
 local picker  = require("src/picker")
 
-log('RaguElp starting...')
+log("RaguElp starting...")
 
 -- Every module gets these calls, if it has a function with that name:
 --  onMatch(rule, text) a rule fired
@@ -23,7 +23,7 @@ local function callAll(name, ...)
 end
 
 if not Plugin.HasPermission(PluginPermissions.chatAccess) then
-    log("RaguElp: RaguElp hasn't been granted, so no chat messages will arrive.")
+    log("RaguElp: chatAccess hasn't been granted, so no chat messages will arrive.")
 end
 
 Event.ChatMessage.Subscribe("raguElpChat", function(event)

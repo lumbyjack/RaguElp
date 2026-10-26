@@ -1,8 +1,8 @@
--- A debuff rule has `debuff` (the icon's sprite ID) instead of `match`.
 -- Each rule:
 --   match   = words to look for in a game message (not case-sensitive)
 --   show    = the text to appear on the banner
 --   graphic = optional: a graphic from `boxes.lua` to draw around you
+-- A debuff rule has `debuff` (the icon's sprite ID) instead of `match`.
 return {
     -- Chat Rules
     { 
@@ -14,7 +14,7 @@ return {
         match   = "channels incoming damage to you",
         show    = "Damage being channeled to you - STOP ATTACKING!"
     },
-        {
+    {
         match   = "reflects incoming damage to",
         show    = "Damage being reflected - STOP ATTACKING!"
     },

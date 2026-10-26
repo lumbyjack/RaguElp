@@ -11,7 +11,7 @@ local function stripTags(text)
     return (string.gsub(text or "", "<[^>]*>", ""))
 end
 
--- The first rule who's `match` words appear in `text`, or nil.
+-- The first rule whose `match` words appear in `text`, or nil.
 local function findRule(text)
     local lower = string.lower(text)
     for _, rule in ipairs(RULES) do
@@ -22,7 +22,7 @@ local function findRule(text)
     return nil
 end
 
--- The rule a chat message trigger, plus the message
+-- The rule a chat message triggers, plus the message
 -- as plain text. nil if it triggers nothing.
 function M.match(event)
     local text = stripTags(event.chatMessage)
@@ -32,7 +32,7 @@ function M.match(event)
             tostring(event.chatType), event.senderNameSimple or "", text))
     end
 
-    if event.chatType == ChatType.PLUGIN then return end
+    if event.chatType == ChatType.PLUGIN then return nil end
 
     local fromPlayer = (event.senderNameSimple or "") ~= ""
     if IGNORE_PLAYER_CHAT and fromPlayer then return nil end

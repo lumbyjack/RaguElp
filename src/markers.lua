@@ -1,6 +1,6 @@
-local draw =    require("src/draw")
+local draw    = require("src/draw")
 local players = require("src/players")
-local picker =  require("src/picker")
+local picker  = require("src/picker")
 
 local M = {}
 
@@ -8,7 +8,7 @@ local M = {}
 local BASE_TILES = 1.5
 local BOMB_TILES = 5.5
 
--- A square around the player called `name`, filled in whilst collision happens.
+-- A square around the player called `name`, filled in while you're inside it.
 local function drawMarker(name, colour, tiles)
     local player = players.find(name)
     local pos    = players.groundPoint(player)

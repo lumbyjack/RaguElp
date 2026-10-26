@@ -9,6 +9,12 @@ local panel, baseList, bombList, countText
 local nearby = {}   -- the names in the dropdowns, in the same order
 local selected = {} -- selected.base and selected.bomb: the picked names
 
+local LABEL_X      = 10
+local DROPDOWN_X   = 60
+local LABEL_WIDTH  = 45
+local LABEL_HEIGHT = 26
+local ROW_HEIGHT   = 40
+
 local function makeText(content, x, y, width, height)
     local text = ui.Text.new(panel)
     text:SetPos(x, y)
@@ -47,10 +53,10 @@ local function build()
     panel:SetSize(200, 110)
     panel:SetPos(0, 0, 0.55, 0.25)
 
-    makeText("Base:", 10,  8, 45, 26)
-    makeText("Bomb:", 10, 48, 45, 26)
-    baseList = makeDropdown(60,  2)
-    bombList = makeDropdown(60, 42)
+    makeText("Base:", LABEL_X, 8,              LABEL_WIDTH, LABEL_HEIGHT)
+    makeText("Bomb:", LABEL_X, 8 + ROW_HEIGHT, LABEL_WIDTH, LABEL_HEIGHT)
+    baseList = makeDropdown(DROPDOWN_X, 2)
+    bombList = makeDropdown(DROPDOWN_X, 2 + ROW_HEIGHT)
     countText = makeText("Nearby players: 0", 10, 80, 120, 14)
 
     watchDropdown(baseList, "base")
